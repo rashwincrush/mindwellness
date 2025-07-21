@@ -103,7 +103,7 @@ export class MemStorage implements IStorage {
     const sampleAdmin: User = {
       id: adminId,
       email: "admin@edu360.com",
-      password: "$2b$12$McHbLvYY6xKmPUWIhdMjUub0nFI.C5GknQ85ipZXW11aWtp5ALp.i", // hashed "password123"
+      password: "$2b$12$DzubbJij0T1dizrJ/Cg3tu/W51//M201oFBVy00H5Ey/rf4VOub8m", // hashed "password123"
       firstName: "Admin",
       lastName: "User",
       role: "admin",
@@ -120,7 +120,7 @@ export class MemStorage implements IStorage {
     const sampleCounselor: User = {
       id: counselorId,
       email: "counselor@edu360.com",
-      password: "$2b$12$McHbLvYY6xKmPUWIhdMjUub0nFI.C5GknQ85ipZXW11aWtp5ALp.i",
+      password: "$2b$12$DzubbJij0T1dizrJ/Cg3tu/W51//M201oFBVy00H5Ey/rf4VOub8m",
       firstName: "Dr. Emily",
       lastName: "Chen",
       role: "counselor",
@@ -137,7 +137,7 @@ export class MemStorage implements IStorage {
     const sampleParent: User = {
       id: parentId,
       email: "parent@edu360.com",
-      password: "$2b$12$McHbLvYY6xKmPUWIhdMjUub0nFI.C5GknQ85ipZXW11aWtp5ALp.i",
+      password: "$2b$12$DzubbJij0T1dizrJ/Cg3tu/W51//M201oFBVy00H5Ey/rf4VOub8m",
       firstName: "Sarah",
       lastName: "Johnson",
       role: "parent",
@@ -154,7 +154,7 @@ export class MemStorage implements IStorage {
     const sampleStudent: User = {
       id: studentId,
       email: "student@edu360.com",
-      password: "$2b$12$McHbLvYY6xKmPUWIhdMjUub0nFI.C5GknQ85ipZXW11aWtp5ALp.i",
+      password: "$2b$12$DzubbJij0T1dizrJ/Cg3tu/W51//M201oFBVy00H5Ey/rf4VOub8m",
       firstName: "Alex",
       lastName: "Johnson",
       role: "student",
@@ -171,7 +171,7 @@ export class MemStorage implements IStorage {
     const sampleTeacher: User = {
       id: teacherId,
       email: "teacher@edu360.com",
-      password: "$2b$12$McHbLvYY6xKmPUWIhdMjUub0nFI.C5GknQ85ipZXW11aWtp5ALp.i",
+      password: "$2b$12$DzubbJij0T1dizrJ/Cg3tu/W51//M201oFBVy00H5Ey/rf4VOub8m",
       firstName: "Mr. David",
       lastName: "Rodriguez",
       role: "teacher",

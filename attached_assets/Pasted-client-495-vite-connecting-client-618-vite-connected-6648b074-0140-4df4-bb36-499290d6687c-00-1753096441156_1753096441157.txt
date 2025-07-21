@@ -1,0 +1,46 @@
+client:495 [vite] connecting...
+client:618 [vite] connected.
+6648b074-0140-4df4-bb36-499290d6687c-00-14w0trc17u5rc.spock.replit.dev/:1 [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) <input data-replit-metadata=​"client/​src/​pages/​Login.tsx:​171:​28" data-component-name=​"Input" type=​"password" class=​"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:​border-0 file:​bg-transparent file:​text-sm file:​font-medium file:​text-foreground placeholder:​text-muted-foreground focus-visible:​outline-none focus-visible:​ring-2 focus-visible:​ring-ring focus-visible:​ring-offset-2 disabled:​cursor-not-allowed disabled:​opacity-50 md:​text-sm" name=​"password" placeholder=​"Enter your password" id=​":​r4:​-form-item" aria-describedby=​":​r4:​-form-item-description" aria-invalid=​"false" value=​"password123">​flex
+supabase.ts:29  POST https://6648b074-0140-4df4-bb36-499290d6687c-00-14w0trc17u5rc.spock.replit.dev/api/auth/signin 401 (Unauthorized)
+signIn @ supabase.ts:29
+signIn @ AuthContext.tsx:36
+handleSignIn @ Login.tsx:66
+(anonymous) @ chunk-4BFJKWC4.js?v=1f6a1548:1465
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=1f6a1548:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=1f6a1548:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=1f6a1548:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=1f6a1548:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=1f6a1548:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=1f6a1548:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=1f6a1548:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=1f6a1548:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=1f6a1548:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=1f6a1548:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=1f6a1548:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=1f6a1548:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=1f6a1548:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=1f6a1548:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=1f6a1548:5449
+supabase.ts:29 Fetch failed loading: POST "https://6648b074-0140-4df4-bb36-499290d6687c-00-14w0trc17u5rc.spock.replit.dev/api/auth/signin".
+signIn @ supabase.ts:29
+signIn @ AuthContext.tsx:36
+handleSignIn @ Login.tsx:66
+(anonymous) @ chunk-4BFJKWC4.js?v=1f6a1548:1465
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=1f6a1548:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=1f6a1548:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=1f6a1548:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=1f6a1548:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=1f6a1548:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=1f6a1548:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=1f6a1548:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=1f6a1548:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=1f6a1548:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=1f6a1548:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=1f6a1548:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=1f6a1548:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=1f6a1548:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=1f6a1548:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=1f6a1548:5449
+6648b074-0140-4df4-bb36-499290d6687c-00-14w0trc17u5rc.spock.replit.dev/:1 [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) <input data-replit-metadata=​"client/​src/​pages/​Login.tsx:​171:​28" data-component-name=​"Input" type=​"password" class=​"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:​border-0 file:​bg-transparent file:​text-sm file:​font-medium file:​text-foreground placeholder:​text-muted-foreground focus-visible:​outline-none focus-visible:​ring-2 focus-visible:​ring-ring focus-visible:​ring-offset-2 disabled:​cursor-not-allowed disabled:​opacity-50 md:​text-sm" name=​"password" placeholder=​"Enter your password" id=​":​r9:​-form-item" aria-describedby=​":​r9:​-form-item-description" aria-invalid=​"false" value>​flex
