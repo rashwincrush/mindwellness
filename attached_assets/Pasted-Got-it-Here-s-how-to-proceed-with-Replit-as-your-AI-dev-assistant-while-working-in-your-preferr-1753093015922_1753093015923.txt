@@ -1,0 +1,68 @@
+Got it! Here’s how to proceed with **Replit as your AI dev assistant** while working in your preferred order:
+
+---
+
+### 🧠 Instruct Replit (Step-by-Step)
+
+#### ✅ Step 1: Build the Frontend First
+
+> “Replit, generate the complete frontend UI for Edu360+ — an AI-powered mental wellness and school safety platform.
+> Focus on these screens:
+>
+> * Login / Signup (role-based: student, teacher, parent, counselor, admin)
+> * Mood Check-in Interface (emoji + journal + AI chatbot button)
+> * Anonymous Reporting (voice, photo, text upload)
+> * Emergency Panic Button (location-aware)
+> * Counselor Dashboard (case logs, flagged students, chat)
+> * Admin Console (alerts, mood trends, audit logs)
+> * Parent Portal (view mood reports, real-time trip alerts)
+>   Use **React + TailwindCSS**, and assume Supabase will be connected later.”
+
+---
+
+#### ✅ Step 2: Request the Supabase Schema
+
+Once frontend UI is ready:
+
+> “Replit, now generate the complete Supabase schema for the above app.
+> I will manually paste this into the Supabase SQL editor.
+> Make sure all tables include UUID primary keys, `created_at`, `updated_at` timestamps, and role-based RLS logic.
+> Include:
+>
+> * users (linked to Supabase auth)
+> * mood\_checkins
+> * anonymous\_reports
+> * panic\_alerts
+> * wellness\_cases
+> * parent\_notifications
+> * counselor\_notes
+> * trip\_tracking
+>   Return the full schema in SQL format ready for direct execution.”
+
+---
+
+#### ✅ Step 3: Backend & Supabase Connection
+
+Once schema is added in Supabase:
+
+> “Replit, now connect all frontend logic to the Supabase instance.
+> Use environment variables for URL and anon key.
+> Add real-time listeners for panic\_alerts and mood\_checkins.
+> Use Supabase Edge Functions for:
+>
+> * emergency broadcast (SMS/email)
+> * AI mood analysis (OpenAI)
+> * counselor escalation triggers
+>   Use context provider for user session and role access control.”
+
+---
+
+### 🧩 Result
+
+You now have a **modular, production-ready stack** built step by step:
+
+1. Frontend UI (React + Tailwind on Vercel)
+2. Supabase schema (added once manually)
+3. Backend logic connected (Replit → Supabase)
+
+Would you like me to draft the **full Supabase schema now** so you can paste it directly when ready?
