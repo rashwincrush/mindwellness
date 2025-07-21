@@ -1,0 +1,140 @@
+Absolutely. Here's a **complete, unified To-Do list** for your **Edu360+ platform** development with **Replit + Supabase + Vercel**. This list combines **all frontend, backend, deployment, and architecture setup tasks** without skipping a single detail. All API integrations (like ChatGPT, Twilio, Maps, etc.) are marked to be handled **outside this development phase** — so they will be left as placeholders or stubs.
+
+---
+
+## 🔧 To-Do List for Edu360+ Development
+
+1. **Start with Replit as your AI-powered dev assistant**, but use it only for development and testing — not for hosting or deployment.
+
+2. In Replit, begin by building the full **frontend UI using React and TailwindCSS**. Focus on these components and pages:
+
+   * Login and Signup screens (with role selection: student, teacher, parent, counselor, admin)
+   * Mood Check-in interface: emoji selector, journal input, and an AI chatbot button (AI functionality to be added later)
+   * Anonymous Reporting form: allow voice, image, and text uploads (functionality placeholders only)
+   * Emergency Panic Button UI: shows user’s location but doesn’t send it anywhere yet
+   * Counselor Dashboard: show case logs, flagged students, chat placeholder
+   * Admin Console: display mood trends, audit logs, alerts
+   * Parent Portal: view mood check-ins and real-time trip alert interface
+   * Additional pages: index.jsx, dashboard.jsx, mood.jsx, reports.jsx, emergency.jsx
+
+3. Organize the frontend into the following folder structure:
+
+   ```
+   /src
+     /components
+       - MoodCheckin.jsx
+       - PanicButton.jsx
+       - AnonymousReportForm.jsx
+       - CounselorDashboard.jsx
+       - AdminAnalyticsPanel.jsx
+     /pages
+       - index.jsx
+       - login.jsx
+       - dashboard.jsx
+       - emergency.jsx
+       - mood.jsx
+       - reports.jsx
+   /supabase
+     - supabaseClient.js
+     - rls.sql (to hold role-based access policies for documentation)
+   /utils
+     - aiAnalysis.js (just a stub function returning placeholder data)
+     - notification.js (placeholder function, no actual API integration)
+   .env (testing keys only, don’t hardcode anything)
+   README.md (deployment + usage instructions)
+   ```
+
+4. Once frontend screens are built, move to the Supabase database schema design.
+
+5. In Supabase (via SQL Editor), manually create the following tables using SQL with UUID primary keys and `created_at`/`updated_at` columns:
+
+   * `users`: link this to Supabase Auth and include role (student, counselor, admin, etc.)
+   * `mood_checkins`: fields for mood emoji, journal text, mood\_score, user\_id
+   * `anonymous_reports`: report type, media file URL, text input, timestamp
+   * `panic_alerts`: location, user\_id, triggered timestamp
+   * `wellness_cases`: for counselor case handling and escalation logs
+   * `counselor_notes`: notes on individual cases written by counselors
+   * `parent_notifications`: logs of alerts sent to parents
+   * `trip_tracking`: real-time bus tracking fields (status, student\_id, location, timestamp)
+
+6. Define RLS (Row-Level Security) for each table:
+
+   * Users can only read/write their own mood\_checkins
+   * Counselors can access their assigned cases and notes
+   * Admins have unrestricted access
+   * Anonymous reports should be write-only with no read access for the submitter
+
+7. Back in Replit, connect your Supabase instance using `supabaseClient.js` with:
+
+   * `SUPABASE_URL`
+   * `SUPABASE_ANON_KEY`
+     Use `.env` to store them for testing locally.
+
+8. Set up **React Context Provider** to manage:
+
+   * Supabase session (auth status)
+   * Role-based UI rendering (e.g., show admin console only for admins)
+
+9. Enable **Supabase Realtime** listeners for:
+
+   * `panic_alerts` table: notify admin/counselor UI instantly when triggered
+   * `mood_checkins` table: reflect trends or counselor triggers live
+
+10. Add Supabase Edge Functions folder in project for:
+
+* Emergency broadcast (SMS/email) – **leave API code as placeholder**
+* AI mood analysis for journals using OpenAI – **leave as stub**
+* Escalation logic for counselor cases – **logic only, trigger only**
+
+11. Avoid any external API integrations during development. Only add **placeholder files** and **comments** where they will be plugged in later. This includes:
+
+* ChatGPT (for AI analysis)
+* Twilio (for SMS alerts)
+* Google Maps or GPS APIs (for location sharing)
+* Firebase Push Notifications
+* WhatsApp Business APIs
+
+12. Push your Replit project to GitHub — this acts as the version-controlled codebase for Vercel to deploy from.
+
+13. Connect your GitHub repo to Vercel. Configure it to auto-deploy on every push to `main`.
+
+14. In Vercel, set up these environment variables (use dummy/stub values for now where APIs aren’t implemented):
+
+* `SUPABASE_URL`→ to be added later
+* `SUPABASE_ANON_KEY`→ to be added later
+* `OPENAI_API_KEY` → to be added later
+* `TWILIO_AUTH_TOKEN` → to be added later
+* `MAPS_API_KEY` → to be added later
+
+15. Write a README.md that includes:
+
+* Project overview and purpose
+* Local dev setup instructions (Replit)
+* How to set up Supabase and paste schema
+* How to deploy via GitHub to Vercel
+* List of planned integrations (AI, emergency notifications) to be implemented later
+
+16. Do **not** use Replit hosting, Replit DB, or deploy directly from Replit — keep it only as your development playground.
+
+17. Make sure your frontend is 100% responsive and accessible on mobile screens, since school staff and parents may access via phones.
+
+18. Leave all chatbot, emergency alert triggers, and AI analysis buttons wired visually, but **non-functional until APIs are added in next stage.**
+
+19. After this full development is complete and tested:
+
+* Revisit `utils/aiAnalysis.js` and replace placeholder with OpenAI API
+* Add actual Twilio/SMTP logic to `notification.js`
+* Replace location mock with real GPS/map API in panic button
+
+20. Once API logic is added externally, deploy final updates to Vercel and consider adding CI/CD protections (like preview deployments for test branches).
+
+---
+
+Let me know if you want:
+
+* Full SQL schema right now to paste into Supabase
+* The stub file contents for AI and notifications
+* A complete README.md template ready to drop into your project directory
+* A full repo starter ZIP or GitHub-ready scaffold
+
+I'm ready to build it out next.

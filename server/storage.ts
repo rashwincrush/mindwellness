@@ -131,6 +131,138 @@ export class MemStorage implements IStorage {
       parentId: null
     };
     this.users.set(counselorId, sampleCounselor);
+
+    // Create sample parent
+    const parentId = this.generateId();
+    const sampleParent: User = {
+      id: parentId,
+      email: "parent@edu360.com",
+      password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6NqvQqx0.S",
+      firstName: "Sarah",
+      lastName: "Johnson",
+      role: "parent",
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      grade: null,
+      parentId: null
+    };
+    this.users.set(parentId, sampleParent);
+
+    // Create sample student (child of parent)
+    const studentId = this.generateId();
+    const sampleStudent: User = {
+      id: studentId,
+      email: "student@edu360.com",
+      password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6NqvQqx0.S",
+      firstName: "Alex",
+      lastName: "Johnson",
+      role: "student",
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      grade: "Grade 9",
+      parentId: parentId
+    };
+    this.users.set(studentId, sampleStudent);
+
+    // Create sample teacher
+    const teacherId = this.generateId();
+    const sampleTeacher: User = {
+      id: teacherId,
+      email: "teacher@edu360.com",
+      password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6NqvQqx0.S",
+      firstName: "Mr. David",
+      lastName: "Rodriguez",
+      role: "teacher",
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      grade: null,
+      parentId: null
+    };
+    this.users.set(teacherId, sampleTeacher);
+
+    // Add sample mood checkins
+    const mood1Id = this.generateId();
+    this.moodCheckins.set(mood1Id, {
+      id: mood1Id,
+      userId: studentId,
+      mood: 'okay',
+      energyLevel: 3,
+      journalEntry: 'Had a tough day with math class but feeling better now.',
+      aiAnalysis: { sentiment: 'neutral', keywords: ['math', 'tough'], flagged: false },
+      isPrivate: false,
+      createdAt: new Date()
+    });
+
+    const mood2Id = this.generateId();
+    this.moodCheckins.set(mood2Id, {
+      id: mood2Id,
+      userId: studentId,
+      mood: 'sad',
+      energyLevel: 2,
+      journalEntry: 'Feeling overwhelmed with homework and social pressure.',
+      aiAnalysis: { sentiment: 'negative', keywords: ['overwhelmed', 'pressure'], flagged: true },
+      isPrivate: true,
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // Yesterday
+    });
+
+    // Add sample anonymous report
+    const reportId = this.generateId();
+    this.anonymousReports.set(reportId, {
+      id: reportId,
+      reportType: 'bullying',
+      description: 'Student being harassed in hallways during lunch break.',
+      isEmergency: false,
+      attachments: null,
+      location: 'Main hallway near cafeteria',
+      status: 'pending',
+      assignedCounselorId: counselorId,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Add sample wellness case
+    const caseId = this.generateId();
+    this.wellnessCases.set(caseId, {
+      id: caseId,
+      studentId: studentId,
+      counselorId: counselorId,
+      title: 'Academic Stress Management',
+      description: 'Student showing signs of academic burnout and social anxiety.',
+      priority: 'medium',
+      status: 'open',
+      lastContact: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
+      updatedAt: new Date()
+    });
+
+    // Add sample counselor note
+    const noteId = this.generateId();
+    this.counselorNotes.set(noteId, {
+      id: noteId,
+      caseId: caseId,
+      counselorId: counselorId,
+      note: 'Initial consultation completed. Student is responsive to CBT techniques. Scheduled follow-up for next week.',
+      isPrivate: true,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) // 3 days ago
+    });
+
+    // Add sample parent notification
+    const notificationId = this.generateId();
+    this.parentNotifications.set(notificationId, {
+      id: notificationId,
+      parentId: parentId,
+      studentId: studentId,
+      type: 'mood_alert',
+      title: 'Mood Check-in Alert',
+      message: 'Your child Alex has been experiencing some academic stress. The school counselor has reached out for support.',
+      read: false,
+      createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000) // 12 hours ago
+    });
+
+    console.log('Sample data initialized with multiple user roles and test data');
   }
 
   private generateId(): string {
