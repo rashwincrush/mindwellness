@@ -4,6 +4,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY || "demo-key"
 });
 
+// If no real API key is present, operate in mock mode (skip external calls)
+const hasApiKey = !!(process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY);
+
 interface MoodAnalysis {
   sentiment: 'positive' | 'neutral' | 'negative';
   confidence: number;
@@ -31,6 +34,24 @@ class OpenAIService {
     energyLevel: number
   ): Promise<MoodAnalysis> {
     try {
+      // Short-circuit with local heuristic analysis if no API key is configured
+      if (!hasApiKey) {
+        const isLowMood = mood === 'very-sad' || mood === 'sad';
+        const isLowEnergy = energyLevel <= 2;
+        const lower = journalEntry?.toLowerCase() || '';
+        const hasConcerningKeywords = lower.includes('hurt') || lower.includes('alone') || lower.includes('hopeless');
+
+        return {
+          sentiment: isLowMood ? 'negative' : mood === 'okay' ? 'neutral' : 'positive',
+          confidence: 0.6,
+          keywords: [],
+          concerns: hasConcerningKeywords ? ['concerning language detected'] : [],
+          recommendations: isLowMood ? ['Consider speaking with a counselor', 'Practice self-care'] : ['Keep up the positive attitude'],
+          flagged: isLowMood && (isLowEnergy || hasConcerningKeywords),
+          priority: isLowMood && hasConcerningKeywords ? 'high' : 'medium'
+        };
+      }
+
       const prompt = `You are a mental health expert analyzing a student's mood check-in. 
       
       Student mood: ${mood}
@@ -109,6 +130,17 @@ class OpenAIService {
 
   async chatWithStudent(message: string, context: any[] = []): Promise<ChatResponse> {
     try {
+      // Return a safe, supportive mock response if no API key is configured
+      if (!hasApiKey) {
+        const suggestions = this.generateSuggestions(message, "");
+        const resources = this.generateResources(message);
+        return {
+          message: "Thanks for sharing. I'm here to listen and support you. Would you like to talk more about what's on your mind today?",
+          suggestions,
+          resources
+        };
+      }
+
       const systemPrompt = `You are a compassionate AI wellness companion for students. Your role is to:
       - Provide supportive, non-judgmental responses
       - Encourage healthy coping strategies
@@ -125,10 +157,12 @@ class OpenAIService {
       
       Keep responses warm, age-appropriate, and hopeful.`;
 
-      const contextMessages = context.slice(-4).map((msg: any) => ({
-        role: msg.isAi ? "assistant" : "user",
-        content: msg.message
-      }));
+      const contextMessages: { role: 'assistant' | 'user'; content: string }[] = context
+        .slice(-4)
+        .map((msg: any) => ({
+          role: msg?.isAi ? 'assistant' : 'user',
+          content: String(msg?.message ?? '')
+        }));
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -193,9 +227,9 @@ class OpenAIService {
     ];
   }
 
-  private generateResources(message: string): Array<{title: string; url: string; type: string}> {
+  private generateResources(message: string): ChatResponse['resources'] {
     const lowerMessage = message.toLowerCase();
-    const resources = [];
+    const resources: ChatResponse['resources'] = [];
     
     if (lowerMessage.includes('anxious') || lowerMessage.includes('panic')) {
       resources.push({
