@@ -7,6 +7,11 @@ const openai = new OpenAI({
 // If no real API key is present, operate in mock mode (skip external calls)
 const hasApiKey = !!(process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY);
 
+if (!hasApiKey) {
+  // eslint-disable-next-line no-console
+  console.warn("OpenAI API key not set. Running in MOCK AI mode (no external API calls).");
+}
+
 interface MoodAnalysis {
   sentiment: 'positive' | 'neutral' | 'negative';
   confidence: number;
