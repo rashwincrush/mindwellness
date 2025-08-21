@@ -100,6 +100,14 @@ class AuthManager {
     return this.user;
   }
 
+  updateUserInStorage(updatedUser: AuthUser): void {
+    this.user = updatedUser;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('edu360_user', JSON.stringify(updatedUser));
+    }
+    this.notifyListeners();
+  }
+
   onAuthStateChange(callback: (user: AuthUser | null) => void): () => void {
     this.listeners.push(callback);
     return () => {

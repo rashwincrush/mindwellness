@@ -1,4 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -47,6 +48,16 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Add explicit route handler for client-side routes
+  // This needs to come after API routes but before the catch-all handler
+  app.get(['/profile', '/dashboard', '/mood-checkin', '/reports', '/ai-chat', '/settings', '/users', '/analytics', '/cases', '/notifications', '/mood-insights', '/child-reports'], (req, res, next) => {
+    if (app.get("env") === "development") {
+      next(); // Let Vite middleware handle it in development
+    } else {
+      res.sendFile(path.resolve(import.meta.dirname, 'public', 'index.html'));
+    }
+  });
+  
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
@@ -57,15 +68,12 @@ app.use((req, res, next) => {
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
+  // Other ports are firewalled. Default to 5050 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  const port = parseInt(process.env.PORT || '5050', 10);
+  const host = process.env.HOST || '0.0.0.0';
+  server.listen(port, host, () => {
+    log(`serving on port ${port} (http://${host === '0.0.0.0' ? 'localhost' : host}:${port})`);
   });
 })();

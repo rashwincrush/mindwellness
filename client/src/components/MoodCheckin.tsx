@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'wouter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -49,6 +50,7 @@ export function MoodCheckin() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedMood, setSelectedMood] = useState<string>('');
   const [selectedEnergy, setSelectedEnergy] = useState<number>(3);
+  const [, setLocation] = useLocation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,8 +96,8 @@ export function MoodCheckin() {
 
   const openAIChat = () => {
     setIsOpen(false);
-    // Navigate to AI chat (implement based on your routing)
-    window.location.hash = '#ai-chat';
+    // Navigate to AI chat using wouter routing
+    setLocation('/ai-chat');
   };
 
   return (

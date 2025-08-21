@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
@@ -35,10 +35,15 @@ const signUpSchema = signInSchema.extend({
   path: ["confirmPassword"],
 });
 
-export default function Login() {
+export default function Login({ initialTab = 'signin' }: { initialTab?: 'signin' | 'signup' }) {
   const { signIn, signUp, loading } = useAuth();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('signin');
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Keep tab in sync with route-driven prop
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   const signInForm = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -69,9 +74,10 @@ export default function Login() {
         description: "You have successfully signed in.",
       });
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to sign in';
       toast({
         title: "Sign In Failed",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     }
@@ -86,9 +92,10 @@ export default function Login() {
         description: "Welcome to Edu360+. Your account has been created successfully.",
       });
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to sign up';
       toast({
         title: "Sign Up Failed",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     }
@@ -139,7 +146,7 @@ export default function Login() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'signin' | 'signup')}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>

@@ -7,6 +7,38 @@ import { insertUserSchema, insertMoodCheckinSchema, insertAnonymousReportSchema,
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // User profile routes
+  app.put("/api/users/profile", async (req, res) => {
+    try {
+      const { id, firstName, lastName, email } = req.body;
+      
+      // Get the user by ID
+      const user = await storage.getUserById(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Update user in storage
+      await storage.updateUser(id, {
+        firstName, 
+        lastName,
+        email,
+        updatedAt: new Date()
+      });
+      
+      // Return updated user
+      const updatedUser = await storage.getUserById(id);
+      if (!updatedUser) {
+        return res.status(500).json({ message: "Failed to retrieve updated user" });
+      }
+      
+      const { password: _, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+  
   // Authentication routes
   app.post("/api/auth/signin", async (req, res) => {
     try {

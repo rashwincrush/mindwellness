@@ -22,6 +22,17 @@ import {
   type ChatMessage,
   type InsertChatMessage
 } from "@shared/schema";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get directory name in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Path for data storage
+const DATA_FILE = path.join(__dirname, '..', 'data', 'app-data.json');
+
 
 export interface IStorage {
   // User operations
@@ -93,8 +104,131 @@ export class MemStorage implements IStorage {
     this.emergencyAlerts = new Map();
     this.counselorAlerts = new Map();
     
-    // Initialize with some sample data
-    this.initializeSampleData();
+    // Try to load data from file, if it exists
+    if (!this.loadFromFile()) {
+      // Initialize with sample data only if no data was loaded
+      this.initializeSampleData();
+    }
+
+    // Set up auto-save on process exit
+    process.on('SIGINT', () => {
+      this.saveToFile();
+      process.exit(0);
+    });
+    
+    // Set up periodic auto-save (every 5 minutes)
+    setInterval(() => this.saveToFile(), 5 * 60 * 1000);
+  }
+  
+  /**
+   * Save all data to a JSON file
+   */
+  private saveToFile(): boolean {
+    try {
+      // Create the data directory if it doesn't exist
+      const dataDir = path.dirname(DATA_FILE);
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      
+      // Convert Maps to plain objects
+      const data = {
+        users: Object.fromEntries(this.users),
+        moodCheckins: Object.fromEntries(this.moodCheckins),
+        anonymousReports: Object.fromEntries(this.anonymousReports),
+        panicAlerts: Object.fromEntries(this.panicAlerts),
+        wellnessCases: Object.fromEntries(this.wellnessCases),
+        counselorNotes: Object.fromEntries(this.counselorNotes),
+        chatMessages: Object.fromEntries(this.chatMessages),
+        parentNotifications: Object.fromEntries(this.parentNotifications),
+        emergencyAlerts: Object.fromEntries(this.emergencyAlerts),
+        counselorAlerts: Object.fromEntries(this.counselorAlerts),
+      };
+      
+      // Write to file
+      fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+      console.log(`Data saved to ${DATA_FILE}`);
+      return true;
+    } catch (error) {
+      console.error('Error saving data to file:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * Load data from JSON file
+   * @returns true if data was loaded successfully
+   */
+  private loadFromFile(): boolean {
+    try {
+      if (!fs.existsSync(DATA_FILE)) {
+        console.log('No saved data found, initializing with sample data');
+        return false;
+      }
+      
+      const rawData = fs.readFileSync(DATA_FILE, 'utf8');
+      const data = JSON.parse(rawData);
+      
+      // Convert plain objects back to Maps
+      this.users = new Map(Object.entries(data.users || {}));
+      this.moodCheckins = new Map(Object.entries(data.moodCheckins || {}));
+      this.anonymousReports = new Map(Object.entries(data.anonymousReports || {}));
+      this.panicAlerts = new Map(Object.entries(data.panicAlerts || {}));
+      this.wellnessCases = new Map(Object.entries(data.wellnessCases || {}));
+      this.counselorNotes = new Map(Object.entries(data.counselorNotes || {}));
+      this.chatMessages = new Map(Object.entries(data.chatMessages || {}));
+      this.parentNotifications = new Map(Object.entries(data.parentNotifications || {}));
+      this.emergencyAlerts = new Map(Object.entries(data.emergencyAlerts || {}));
+      this.counselorAlerts = new Map(Object.entries(data.counselorAlerts || {}));
+      
+      // Convert date strings back to Date objects
+      this.restoreDates();
+      
+      console.log(`Data loaded from ${DATA_FILE}`);
+      return true;
+    } catch (error) {
+      console.error('Error loading data from file:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * Convert date strings back to Date objects after loading from JSON
+   */
+  private restoreDates() {
+    // Process users
+    this.users.forEach((user, key) => {
+      if (user.createdAt && typeof user.createdAt === 'string') {
+        user.createdAt = new Date(user.createdAt);
+      }
+      if (user.updatedAt && typeof user.updatedAt === 'string') {
+        user.updatedAt = new Date(user.updatedAt);
+      }
+    });
+    
+    // Process mood checkins
+    this.moodCheckins.forEach((checkin, key) => {
+      if (checkin.createdAt && typeof checkin.createdAt === 'string') {
+        checkin.createdAt = new Date(checkin.createdAt);
+      }
+    });
+    
+    // Process all other collections with dates
+    this.anonymousReports.forEach((report, key) => {
+      if (report.createdAt && typeof report.createdAt === 'string') report.createdAt = new Date(report.createdAt);
+      if (report.updatedAt && typeof report.updatedAt === 'string') report.updatedAt = new Date(report.updatedAt);
+    });
+    
+    this.panicAlerts.forEach((alert, key) => {
+      if (alert.createdAt && typeof alert.createdAt === 'string') alert.createdAt = new Date(alert.createdAt);
+      if (alert.resolvedAt && typeof alert.resolvedAt === 'string') alert.resolvedAt = new Date(alert.resolvedAt);
+    });
+    
+    this.wellnessCases.forEach((case_, key) => {
+      if (case_.createdAt && typeof case_.createdAt === 'string') case_.createdAt = new Date(case_.createdAt);
+      if (case_.updatedAt && typeof case_.updatedAt === 'string') case_.updatedAt = new Date(case_.updatedAt);
+      if (case_.lastContact && typeof case_.lastContact === 'string') case_.lastContact = new Date(case_.lastContact);
+    });
   }
 
   private initializeSampleData() {
@@ -276,6 +410,19 @@ export class MemStorage implements IStorage {
   async getUserByEmail(email: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(user => user.email === email);
   }
+  
+  async getUserById(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+  
+  async updateUser(id: string, userData: Partial<User>): Promise<void> {
+    const user = this.users.get(id);
+    if (user) {
+      const updated = { ...user, ...userData, updatedAt: new Date() };
+      this.users.set(id, updated);
+      this.saveToFile();
+    }
+  }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.generateId();
@@ -293,6 +440,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.users.set(id, user);
+    this.saveToFile(); // Persist after creating user
     return user;
   }
 
@@ -319,6 +467,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date()
     };
     this.moodCheckins.set(id, checkin);
+    this.saveToFile();
     return checkin;
   }
 
@@ -343,6 +492,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.anonymousReports.set(id, report);
+    this.saveToFile();
     return report;
   }
 
@@ -356,6 +506,7 @@ export class MemStorage implements IStorage {
     if (report) {
       const updated = { ...report, ...data, updatedAt: new Date() };
       this.anonymousReports.set(id, updated);
+      this.saveToFile();
     }
   }
 
@@ -371,6 +522,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date()
     };
     this.panicAlerts.set(id, alert);
+    this.saveToFile();
     return alert;
   }
 
@@ -394,6 +546,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.wellnessCases.set(id, case_);
+    this.saveToFile();
     return case_;
   }
 
@@ -413,6 +566,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date()
     };
     this.chatMessages.set(id, message);
+    this.saveToFile();
     return message;
   }
 
@@ -452,6 +606,7 @@ export class MemStorage implements IStorage {
       id,
       createdAt: new Date()
     });
+    this.saveToFile();
   }
 
   async getAdminStats(): Promise<any> {
@@ -502,6 +657,7 @@ export class MemStorage implements IStorage {
     
     // In a real implementation, this would trigger external notifications
     console.log("EMERGENCY ALERT CREATED:", alert);
+    this.saveToFile();
   }
 }
 

@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { 
+import {
   Users, 
   Heart, 
   Shield, 
@@ -29,20 +29,59 @@ import {
   PieChart
 } from 'lucide-react';
 
-export default function AdminDashboard() {
-  const { data: stats = {} } = useQuery({
+import { useState } from 'react';
+
+type AdminStats = {
+  totalUsers?: number;
+  studentCount?: number;
+  teacherCount?: number;
+  parentCount?: number;
+  counselorCount?: number;
+  dailyCheckins?: number;
+  activeReports?: number;
+  emergencyAlerts?: number;
+};
+
+type SystemHealth = {
+  uptime?: string;
+  database?: string;
+  api?: string;
+  ai?: string;
+  notifications?: string;
+};
+
+type AdminUser = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  isActive?: boolean;
+  createdAt: string;
+};
+
+type AuditLog = {
+  timestamp: string | number;
+  user: string;
+  action: 'LOGIN' | 'CREATE' | 'UPDATE' | string;
+  resource: string;
+  ipAddress: string;
+};
+
+export default function AdminDashboard({ initialTab = 'analytics' }: { initialTab?: 'analytics' | 'users' | 'system' | 'audit' }) {
+  const { data: stats = {} as AdminStats } = useQuery<AdminStats>({
     queryKey: ['/api/admin/stats'],
   });
 
-  const { data: recentUsers = [] } = useQuery({
+  const { data: recentUsers = [] as AdminUser[] } = useQuery<AdminUser[]>({
     queryKey: ['/api/admin/recent-users'],
   });
 
-  const { data: systemHealth = {} } = useQuery({
+  const { data: systemHealth = {} as SystemHealth } = useQuery<SystemHealth>({
     queryKey: ['/api/admin/system-health'],
   });
 
-  const { data: auditLogs = [] } = useQuery({
+  const { data: auditLogs = [] as AuditLog[] } = useQuery<AuditLog[]>({
     queryKey: ['/api/admin/audit-logs'],
   });
 
@@ -62,6 +101,9 @@ export default function AdminDashboard() {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const [tab, setTab] = useState<'analytics' | 'users' | 'system' | 'audit'>(initialTab);
+  const handleTabChange = (value: string) => setTab(value as 'analytics' | 'users' | 'system' | 'audit');
 
   return (
     <div className="animate-fade-in">
@@ -133,7 +175,7 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <Tabs defaultValue="analytics" className="space-y-6">
+      <Tabs value={tab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="users">User Management</TabsTrigger>

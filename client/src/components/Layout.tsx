@@ -4,8 +4,16 @@ import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmergencyPanic } from '@/components/EmergencyPanic';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   GraduationCap, 
   Menu, 
@@ -16,7 +24,9 @@ import {
   Settings,
   Home,
   Phone,
-  AlertTriangle
+  AlertTriangle,
+  User,
+  LogOut
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -128,16 +138,83 @@ export function Layout({ children }: LayoutProps) {
                   {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                 </Badge>
               </div>
+              
+              {/* AI Chat Button with Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div 
+                    className="rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium flex items-center justify-center w-7 h-7 transition-colors cursor-pointer"
+                  >
+                    AI
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link href="/ai-chat" className="flex w-full">
+                      <Bot className="mr-2 h-4 w-4" />
+                      <span>AI Wellness Chat</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link href="/mood-checkin" className="flex w-full">
+                      <Heart className="mr-2 h-4 w-4" />
+                      <span>Mood Check-in</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  {(user.role === 'student' || user.role === 'teacher') && (
+                    <DropdownMenuItem className="cursor-pointer" asChild>
+                      <Link href="/reports" className="flex w-full">
+                        <Shield className="mr-2 h-4 w-4" />
+                        <span>Anonymous Report</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  {user.role === 'counselor' && (
+                    <DropdownMenuItem className="cursor-pointer" asChild>
+                      <Link href="/mood-insights" className="flex w-full">
+                        <Heart className="mr-2 h-4 w-4" />
+                        <span>Mood Insights</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Emergency Panic Button */}
               <EmergencyPanic />
 
               {/* Profile Menu */}
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-gray-300 text-gray-600 text-sm">
-                  {userInitials}
-                </AvatarFallback>
-              </Avatar>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-blue-500 hover:ring-opacity-50 transition-all">
+                    <AvatarFallback className="bg-gray-300 text-gray-600 text-sm">
+                      {userInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-0.5">
+                      <p className="text-sm font-medium">{user.firstName} {user.lastName}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <Link href="/profile">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem 
+                    onClick={signOut} 
+                    className="cursor-pointer text-red-600 focus:text-red-600 hover:text-red-700 focus:bg-red-50"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Mobile menu button */}
               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

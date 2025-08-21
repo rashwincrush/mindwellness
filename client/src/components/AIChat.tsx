@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -31,10 +32,15 @@ interface ChatMessage {
   }>;
 }
 
-export function AIChat() {
+interface AIChatProps {
+  isStandalone?: boolean;
+}
+
+export function AIChat({ isStandalone = false }: AIChatProps) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
+  const [location, setLocation] = useLocation();
+  const [isOpen, setIsOpen] = useState(isStandalone);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -136,27 +142,42 @@ export function AIChat() {
     }
   };
 
+  // Handle closing the standalone chat view
+  const handleClose = () => {
+    if (isStandalone) {
+      // Go back to previous page if it's standalone
+      setLocation('/dashboard');
+    } else {
+      // Just close the dialog if it's a modal
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Bot className="text-blue-600 h-6 w-6" />
-              </div>
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Wellness Chat</h3>
-            <p className="text-sm text-gray-600 mb-4">Chat with our AI counselor</p>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">
-              Start Chatting
-            </Button>
-          </CardContent>
-        </Card>
-      </DialogTrigger>
+    <>
+      {/* Only render the dialog trigger if this is not a standalone page */}
+      {!isStandalone ? (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Bot className="text-blue-600 h-6 w-6" />
+                  </div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Wellness Chat</h3>
+                <p className="text-sm text-gray-600 mb-4">Chat with our AI counselor</p>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                  Start Chatting
+                </Button>
+              </CardContent>
+            </Card>
+          </DialogTrigger>
 
       <DialogContent className="sm:max-w-2xl h-[600px] flex flex-col">
+        {/* Close button added to header */}
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Bot className="h-5 w-5 text-blue-600" />
@@ -261,5 +282,116 @@ export function AIChat() {
         </div>
       </DialogContent>
     </Dialog>
+  ) : (
+    // Standalone version (full page)
+    <div className="max-w-2xl mx-auto h-[calc(100vh-120px)] flex flex-col bg-white shadow-xl rounded-lg">
+      <div className="p-4 border-b">
+        <div className="flex items-center space-x-2">
+          <Bot className="h-5 w-5 text-blue-600" />
+          <span className="font-medium">AI Wellness Companion</span>
+          <Badge variant="secondary" className="ml-auto">
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+            Online
+          </Badge>
+          <Button variant="ghost" size="sm" onClick={handleClose}>
+            Back
+          </Button>
+        </div>
+        <p className="text-sm text-gray-500 mt-1">
+          A safe space to share your thoughts and feelings. This AI is trained to provide supportive responses.
+        </p>
+      </div>
+
+      {/* Chat Messages */}
+      <ScrollArea className="flex-1 p-4 space-y-4">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.isAi ? 'justify-start' : 'justify-end'}`}
+            >
+              <div
+                className={`max-w-[80%] p-3 rounded-lg ${
+                  message.isAi
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'bg-blue-600 text-white'
+                }`}
+              >
+                <p className="text-sm whitespace-pre-wrap">{message.message}</p>
+                
+                {/* AI Suggestions */}
+                {message.suggestions && message.suggestions.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs text-gray-600 font-medium">Quick responses:</p>
+                    {message.suggestions.map((suggestion, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        className="mr-2 mb-2 text-xs"
+                        onClick={() => handleSendMessage(suggestion)}
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+
+                {/* AI Resources */}
+                {message.resources && message.resources.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs text-gray-600 font-medium">Helpful resources:</p>
+                    {message.resources.map((resource, index) => (
+                      <a
+                        key={index}
+                        href={resource.url}
+                        target={resource.type === 'contact' ? '_self' : '_blank'}
+                        className="flex items-center text-xs text-blue-600 hover:text-blue-700 underline"
+                      >
+                        {getResourceIcon(resource.type)}
+                        <span className="ml-2">{resource.title}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                <p className="text-xs text-gray-500 mt-2">
+                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div ref={messagesEndRef} />
+      </ScrollArea>
+
+      {/* Message Input */}
+      <div className="border-t p-4">
+        <div className="flex space-x-2">
+          <Input
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Type your message... (Press Enter to send)"
+            className="flex-1"
+            disabled={chatMutation.isPending}
+          />
+          <Button
+            onClick={() => handleSendMessage()}
+            disabled={chatMutation.isPending || !inputMessage.trim()}
+            size="icon"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <div className="mt-2 text-xs text-gray-500 text-center">
+          This AI provides support but is not a replacement for professional counseling. 
+          In emergencies, call 911 or text 988 for crisis support.
+        </div>
+      </div>
+    </div>
+  )}
+</>
   );
 }
