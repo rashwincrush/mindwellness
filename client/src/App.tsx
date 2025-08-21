@@ -10,6 +10,7 @@ import { useLocation } from "wouter";
 import { Layout } from "@/components/Layout";
 import Login from "@/pages/Login";
 import Home from "@/pages/Home";
+import ContactSales from "@/pages/ContactSales";
 import StudentDashboard from "@/pages/StudentDashboard";
 import CounselorDashboard from "@/pages/CounselorDashboard";
 import AdminDashboard from "@/pages/AdminDashboard";
@@ -41,7 +42,8 @@ function AppRoutes() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/signin" component={() => <Login initialTab="signin" />} />
-        <Route path="/signup" component={() => <Login initialTab="signup" />} />
+        <Route path="/signup" component={ContactSales} />
+        <Route path="/contact" component={ContactSales} />
         <Route component={NotFound} />
       </Switch>
     );

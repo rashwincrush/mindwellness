@@ -49,7 +49,7 @@ export default function Home() {
         </div>
         <nav className="flex items-center gap-3">
           <Link href="/signin"><Button variant="ghost">Sign In</Button></Link>
-          <Link href="/signup"><Button className="bg-blue-600 hover:bg-blue-700">Get Started</Button></Link>
+          <Link href="/contact"><Button className="bg-blue-600 hover:bg-blue-700">Get Started</Button></Link>
         </nav>
       </header>
 
@@ -65,7 +65,7 @@ export default function Home() {
             real-time analytics under one secure hub.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/signup"><Button className="bg-green-600 hover:bg-green-700">Create an Account</Button></Link>
+            <Link href="/contact"><Button className="bg-green-600 hover:bg-green-700">Contact for Demo</Button></Link>
             <Link href="/signin"><Button variant="outline">I already have an account</Button></Link>
           </div>
           <p className="mt-3 text-xs text-gray-500">

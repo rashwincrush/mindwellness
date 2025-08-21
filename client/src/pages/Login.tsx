@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'wouter';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
@@ -149,7 +150,7 @@ export default function Login({ initialTab = 'signin' }: { initialTab?: 'signin'
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'signin' | 'signup')}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsTrigger value="signup">Request Access</TabsTrigger>
               </TabsList>
 
               <TabsContent value="signin" className="space-y-4">
@@ -193,128 +194,24 @@ export default function Login({ initialTab = 'signin' }: { initialTab?: 'signin'
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4">
-                <Form {...signUpForm}>
-                  <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={signUpForm.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} placeholder="John" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={signUpForm.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} placeholder="Doe" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={signUpForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="email" placeholder="john.doe@school.edu" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={signUpForm.control}
-                      name="role"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Role</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select your role" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="student">Student</SelectItem>
-                              <SelectItem value="teacher">Teacher</SelectItem>
-                              <SelectItem value="parent">Parent</SelectItem>
-                              <SelectItem value="counselor">Counselor</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {signUpForm.watch('role') === 'student' && (
-                      <FormField
-                        control={signUpForm.control}
-                        name="grade"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Grade</FormLabel>
-                            <FormControl>
-                              <Input {...field} placeholder="e.g., Grade 10" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
-
-                    <FormField
-                      control={signUpForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="password" placeholder="Create a password" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={signUpForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="password" placeholder="Confirm your password" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-green-600 hover:bg-green-700"
-                      disabled={loading}
-                    >
-                      {loading ? 'Creating Account...' : 'Create Account'}
-                    </Button>
-                  </form>
-                </Form>
+                <div className="space-y-4 text-center">
+                  <p className="text-sm text-gray-700">
+                    Signups are currently closed. Please contact us to get pricing and a demo.
+                  </p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <a href={`mailto:connect@forgeash.in`} className="w-full">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">Email connect@forgeash.in</Button>
+                    </a>
+                    <a href={`https://wa.me/916369126439`} target="_blank" rel="noreferrer" className="w-full">
+                      <Button variant="outline" className="w-full">WhatsApp +91 63691 26439</Button>
+                    </a>
+                  </div>
+                  <div>
+                    <Link href="/contact">
+                      <Button variant="ghost">More contact options</Button>
+                    </Link>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
